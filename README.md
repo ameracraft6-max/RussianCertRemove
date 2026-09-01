@@ -1,7 +1,8 @@
 # 🛡️ Russian CA Remover
 
 <p align="center">
-  <b>Утилита для полного поиска и безопасного удаления сертификатов Минцифры («Russian Trusted Root CA», «Russian Trusted Sub CA») из Windows и всех браузеров с наглядным отчётом.</b>
+  <b>Утилита для полного поиска и безопасного удаления сертификатов Минцифры («Russian Trusted Root CA», «Russian Trusted Sub CA») из Windows и всех браузеров с наглядным отчётом.</b><br><br>
+  <b>🌐 <i>«Мы за безопасный интернет, а не контролируемый»</i></b>
 </p>
 
 <p align="center">
@@ -15,6 +16,8 @@
 <p align="center">
   <img src="assets/screenshot.png" alt="Интерфейс программы Russian CA Remover" width="850" />
 </p>
+
+> ### 🌐 *«Мы за безопасный интернет, а не контролируемый»*
 
 ---
 

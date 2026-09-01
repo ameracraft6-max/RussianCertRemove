@@ -54,9 +54,12 @@
                                 <Border Margin="10,0,0,0" Padding="8,2" CornerRadius="12" Background="#1E3A8A" VerticalAlignment="Center">
                                     <TextBlock Text="v1.0" FontSize="11" FontWeight="SemiBold" Foreground="#60A5FA" />
                                 </Border>
+                                <Border Margin="12,0,0,0" Padding="10,3" CornerRadius="12" Background="#172554" BorderBrush="#1D4ED8" BorderThickness="1" VerticalAlignment="Center">
+                                    <TextBlock Text="🌐 Мы за безопасный интернет, а не контролируемый" FontSize="11.5" FontWeight="SemiBold" Foreground="#93C5FD" />
+                                </Border>
                             </StackPanel>
                             <TextBlock Text="Поиск и удаление сертификатов Russian Trusted Root CA, Sub CA и Минцифры из Windows и браузеров" 
-                                       FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,3,0,0" />
+                                       FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,4,0,0" />
                         </StackPanel>
                     </StackPanel>
 

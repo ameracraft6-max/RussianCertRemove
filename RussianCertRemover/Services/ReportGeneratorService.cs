@@ -229,6 +229,7 @@ namespace RussianCertRemover.Services
             sb.AppendLine("    <div class=\"title\">");
             sb.AppendLine("      <h1>Отчёт очистки сертификатов Минцифры</h1>");
             sb.AppendLine("      <p>Russian Trusted Root CA / Russian Trusted Sub CA Cleaner</p>");
+            sb.AppendLine("      <div style=\"font-size:12px; color:#60a5fa; margin-top:4px; font-weight:600;\">🌐 Мы за безопасный интернет, а не контролируемый</div>");
             sb.AppendLine("    </div>");
             sb.AppendLine("  </div>");
             sb.AppendLine("  <div class=\"meta-badge\">");
@@ -382,6 +383,7 @@ namespace RussianCertRemover.Services
             var sb = new StringBuilder();
             sb.AppendLine("================================================================================");
             sb.AppendLine("      ОТЧЕТ ПОИСКА И УДАЛЕНИЯ СЕРТИФИКАТОВ МИНЦИФРЫ (RUSSIAN CA REMOVER)        ");
+            sb.AppendLine("           «Мы за безопасный интернет, а не контролируемый»                     ");
             sb.AppendLine("================================================================================");
             sb.AppendLine($"Дата формирования: {DateTime.Now:dd.MM.yyyy HH:mm:ss}");
             sb.AppendLine($"Компьютер:         {Environment.MachineName}");
