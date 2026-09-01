@@ -1,0 +1,23 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <ApplicationIcon>app.ico</ApplicationIcon>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+
+    <!-- Assembly & Product Information -->
+    <AssemblyName>RussianCertRemover</AssemblyName>
+    <AssemblyTitle>Russian CA Remover</AssemblyTitle>
+    <Product>Russian CA Remover</Product>
+    <Description>Поиск и удаление сертификатов Минцифры (Russian Trusted Root CA, Sub CA) из Windows и браузеров</Description>
+    <Company>Security Tools</Company>
+    <Copyright>© 2026</Copyright>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+  </PropertyGroup>
+
+</Project>

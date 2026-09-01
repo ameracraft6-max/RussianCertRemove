@@ -1,0 +1,411 @@
+<Window x:Class="RussianCertRemover.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:RussianCertRemover"
+        mc:Ignorable="d"
+        Title="Russian CA Remover — Поиск и удаление сертификатов Минцифры"
+        Height="740" Width="1140"
+        MinWidth="960" MinHeight="580"
+        WindowStartupLocation="CenterScreen"
+        Background="{StaticResource BgPrimaryBrush}"
+        Foreground="{StaticResource TextPrimaryBrush}"
+        FontFamily="{StaticResource MainFont}">
+
+    <Grid>
+        <!-- Main Layout -->
+        <Grid Margin="24,18,24,18">
+            <Grid.RowDefinitions>
+                <!-- Row 0: Header -->
+                <RowDefinition Height="Auto" />
+                <!-- Row 1: Action Toolbar -->
+                <RowDefinition Height="Auto" />
+                <!-- Row 2: Metrics Dashboard -->
+                <RowDefinition Height="Auto" />
+                <!-- Row 3: Tab Content -->
+                <RowDefinition Height="*" />
+                <!-- Row 4: Status Footer -->
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- ROW 0: Header -->
+            <Border Grid.Row="0" Margin="0,0,0,16" Padding="0,0,0,14" BorderThickness="0,0,0,1" BorderBrush="{StaticResource BorderBrush}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- Logo Icon -->
+                        <Border Width="44" Height="44" CornerRadius="10" Margin="0,0,14,0">
+                            <Border.Background>
+                                <LinearGradientBrush StartPoint="0,0" EndPoint="1,1">
+                                    <GradientStop Color="#2563EB" Offset="0" />
+                                    <GradientStop Color="#1D4ED8" Offset="1" />
+                                </LinearGradientBrush>
+                            </Border.Background>
+                            <TextBlock Text="🛡️" FontSize="22" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <StackPanel VerticalAlignment="Center">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="Russian CA Remover" FontSize="20" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                <Border Margin="10,0,0,0" Padding="8,2" CornerRadius="12" Background="#1E3A8A" VerticalAlignment="Center">
+                                    <TextBlock Text="v1.0" FontSize="11" FontWeight="SemiBold" Foreground="#60A5FA" />
+                                </Border>
+                            </StackPanel>
+                            <TextBlock Text="Поиск и удаление сертификатов Russian Trusted Root CA, Sub CA и Минцифры из Windows и браузеров" 
+                                       FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,3,0,0" />
+                        </StackPanel>
+                    </StackPanel>
+
+                    <!-- Admin Status Badge & Elevation Button -->
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                        <Border x:Name="AdminStatusBadge" CornerRadius="16" Padding="12,5" Margin="0,0,10,0" Background="#14532D" BorderBrush="#166534" BorderThickness="1">
+                            <TextBlock x:Name="AdminStatusText" Text="🛡️ Администратор" FontSize="12" FontWeight="SemiBold" Foreground="#4ADE80" />
+                        </Border>
+                        <Button x:Name="BtnRestartAdmin" Click="BtnRestartAdmin_Click" Style="{StaticResource ModernButton}" 
+                                ToolTip="Перезапустить приложение с правами Администратора для очистки LocalMachine"
+                                Visibility="Collapsed" Padding="10,5" FontSize="12">
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock Text="⚡" Margin="0,0,6,0" />
+                                <TextBlock Text="Запустить как Admin" />
+                            </StackPanel>
+                        </Button>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- ROW 1: Action Toolbar -->
+            <Border Grid.Row="1" Margin="0,0,0,16" Padding="14,12" CornerRadius="10" Background="{StaticResource BgSecondaryBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="260" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Scan Button -->
+                    <Button x:Name="BtnScan" Click="BtnScan_Click" Grid.Column="0" Style="{StaticResource PrimaryButton}" Margin="0,0,10,0" Padding="16,8">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🔍" FontSize="14" Margin="0,0,8,0" />
+                            <TextBlock Text="Сканировать ПК и браузеры" />
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Delete Selected Button -->
+                    <Button x:Name="BtnDeleteSelected" Click="BtnDeleteSelected_Click" Grid.Column="1" Style="{StaticResource DangerButton}" Margin="0,0,10,0" Padding="16,8">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="🗑️" FontSize="14" Margin="0,0,8,0" />
+                            <TextBlock Text="Удалить выбранные сертификаты" />
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Export Report Menu Button -->
+                    <Button x:Name="BtnExportReport" Click="BtnExportReport_Click" Grid.Column="2" Style="{StaticResource ModernButton}" Margin="0,0,10,0" Padding="14,8">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="📄" FontSize="14" Margin="0,0,8,0" />
+                            <TextBlock Text="Экспорт отчёта" />
+                        </StackPanel>
+                    </Button>
+
+                    <!-- Search Filter Box -->
+                    <Grid Grid.Column="4">
+                        <TextBox x:Name="TxtFilter" TextChanged="TxtFilter_TextChanged" Padding="28,7,10,7" FontSize="12" />
+                        <TextBlock Text="🔍" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" 
+                                   HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0" IsHitTestVisible="False" />
+                        <TextBlock x:Name="TxtFilterPlaceholder" Text="Поиск сертификата..." FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" 
+                                   HorizontalAlignment="Left" VerticalAlignment="Center" Margin="30,0,0,0" IsHitTestVisible="False" />
+                    </Grid>
+                </Grid>
+            </Border>
+
+            <!-- ROW 2: Metrics Dashboard -->
+            <Grid Grid.Row="2" Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Metric 1: Checked Stores -->
+                <Border Grid.Column="0" Margin="0,0,10,0" Padding="16,12" CornerRadius="10" Background="{StaticResource BgSecondaryBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="ПРОВЕРЕНО ХРАНИЛИЩ" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}" />
+                        <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                            <TextBlock x:Name="LblTotalStores" Text="0" FontSize="22" FontWeight="Bold" Foreground="{StaticResource TextPrimaryBrush}" />
+                            <TextBlock x:Name="LblTotalCertsScanned" Text=" (0 серт.)" FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Bottom" Margin="4,0,0,3" />
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+
+                <!-- Metric 2: Found Russian Certs -->
+                <Border Grid.Column="1" Margin="0,0,10,0" Padding="16,12" CornerRadius="10" Background="{StaticResource BgSecondaryBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="ОБНАРУЖЕНО МИНЦИФРЫ" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}" />
+                        <TextBlock x:Name="LblFoundCerts" Text="0" FontSize="22" FontWeight="Bold" Foreground="{StaticResource AccentBlueBrush}" Margin="0,4,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Metric 3: Deleted Certs -->
+                <Border Grid.Column="2" Margin="0,0,10,0" Padding="16,12" CornerRadius="10" Background="{StaticResource BgSecondaryBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="УСПЕШНО УДАЛЕНО" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}" />
+                        <TextBlock x:Name="LblDeletedCerts" Text="0" FontSize="22" FontWeight="Bold" Foreground="{StaticResource AccentGreenBrush}" Margin="0,4,0,0" />
+                    </StackPanel>
+                </Border>
+
+                <!-- Metric 4: System Status -->
+                <Border Grid.Column="3" Padding="16,12" CornerRadius="10" Background="{StaticResource BgSecondaryBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1">
+                    <StackPanel>
+                        <TextBlock Text="СТАТУС СИСТЕМЫ" FontSize="11" FontWeight="SemiBold" Foreground="{StaticResource TextSecondaryBrush}" />
+                        <TextBlock x:Name="LblSystemStatus" Text="Ожидание сканирования" FontSize="15" FontWeight="Bold" Foreground="#38BDF8" Margin="0,7,0,0" />
+                    </StackPanel>
+                </Border>
+            </Grid>
+
+            <!-- ROW 3: Tab Content -->
+            <Border Grid.Row="3" Background="{StaticResource BgSecondaryBrush}" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="10" Padding="16">
+                <TabControl x:Name="MainTabs" Background="Transparent" BorderThickness="0">
+                    <!-- TAB 1: Found Certificates -->
+                    <TabItem x:Name="TabCerts" Header="📋 Найденные сертификаты (0)" Style="{StaticResource ModernTabItem}">
+                        <Grid Margin="0,12,0,0">
+                            <!-- Empty State when 0 certs -->
+                            <Border x:Name="EmptyStatePanel" Visibility="Visible" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                <StackPanel HorizontalAlignment="Center" MaxWidth="460">
+                                    <TextBlock x:Name="EmptyStateIcon" Text="🔍" FontSize="46" HorizontalAlignment="Center" Margin="0,0,0,10" />
+                                    <TextBlock x:Name="EmptyStateTitle" Text="Нажмите «Сканировать ПК и браузеры»" FontSize="16" FontWeight="SemiBold" HorizontalAlignment="Center" />
+                                    <TextBlock x:Name="EmptyStateDesc" Text="Программа проверит системные хранилища Windows (CurrentUser, LocalMachine) и профили браузеров (Firefox, Chrome, Edge, Яндекс) на наличие сертификатов Russian Trusted Root CA и Минцифры." 
+                                               FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" TextWrapping="Wrap" TextAlignment="Center" Margin="0,8,0,0" />
+                                </StackPanel>
+                            </Border>
+
+                            <!-- DataGrid of Certificates -->
+                            <DataGrid x:Name="GridCertificates" Visibility="Collapsed">
+                                <DataGrid.Columns>
+                                    <!-- Select Checkbox -->
+                                    <DataGridTemplateColumn Width="40" CanUserResize="False">
+                                        <DataGridTemplateColumn.Header>
+                                            <CheckBox x:Name="ChkSelectAll" Checked="ChkSelectAll_Checked" Unchecked="ChkSelectAll_Unchecked" ToolTip="Выбрать все" />
+                                        </DataGridTemplateColumn.Header>
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <CheckBox IsChecked="{Binding IsSelected, UpdateSourceTrigger=PropertyChanged}" HorizontalAlignment="Center" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <!-- Status Badge -->
+                                    <DataGridTemplateColumn Header="Статус" Width="120">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <Border CornerRadius="12" Padding="8,2" HorizontalAlignment="Left" Background="#1C2533" BorderBrush="{Binding StatusBadgeColor}" BorderThickness="1">
+                                                    <TextBlock Text="{Binding StatusDisplay}" FontSize="11" FontWeight="SemiBold" Foreground="{Binding StatusBadgeColor}" />
+                                                </Border>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <!-- Common Name -->
+                                    <DataGridTemplateColumn Header="Имя сертификата (CN)" Width="*">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding CommonName}" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                                                    <TextBlock Text="{Binding CategoryDisplay}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <!-- Store Location -->
+                                    <DataGridTemplateColumn Header="Хранилище / Источник" Width="200">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel VerticalAlignment="Center">
+                                                    <TextBlock Text="{Binding StoreLocationDisplay}" FontWeight="Medium" Foreground="#93C5FD" />
+                                                    <TextBlock Text="{Binding StoreName}" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" Margin="0,2,0,0" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <!-- Thumbprint SHA-1 -->
+                                    <DataGridTemplateColumn Header="Отпечаток SHA-1" Width="160">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding Thumbprint}" FontFamily="Consolas" FontSize="10.5" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+
+                                    <!-- Validity -->
+                                    <DataGridTextColumn Header="Срок действия" Binding="{Binding ValidityDisplay}" Width="160" />
+
+                                    <!-- Actions Column -->
+                                    <DataGridTemplateColumn Header="Действия" Width="150">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                                    <Button Content="Инфо" Click="BtnCertDetails_Click" Style="{StaticResource ModernButton}" Padding="8,3" FontSize="11" Margin="0,0,6,0" />
+                                                    <Button Content="Удалить" Click="BtnDeleteSingle_Click" Style="{StaticResource DangerButton}" Padding="8,3" FontSize="11" />
+                                                </StackPanel>
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </TabItem>
+
+                    <!-- TAB 2: Scanned Stores & Browsers -->
+                    <TabItem x:Name="TabStores" Header="🌐 Хранилища и браузеры (0)" Style="{StaticResource ModernTabItem}">
+                        <Grid Margin="0,12,0,0">
+                            <DataGrid x:Name="GridStores">
+                                <DataGrid.Columns>
+                                    <DataGridTextColumn Header="Хранилище / Профиль" Binding="{Binding StoreName}" Width="*" FontWeight="SemiBold" />
+                                    <DataGridTextColumn Header="Тип" Binding="{Binding StoreType}" Width="160" />
+                                    <DataGridTextColumn Header="Проверено" Binding="{Binding TotalScanned}" Width="100" />
+                                    <DataGridTextColumn Header="Минцифры" Binding="{Binding FoundCount}" Width="100" FontWeight="Bold" />
+                                    <DataGridTemplateColumn Header="Статус" Width="240">
+                                        <DataGridTemplateColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding StatusText}" Foreground="{Binding StatusColor}" FontWeight="SemiBold" VerticalAlignment="Center" />
+                                            </DataTemplate>
+                                        </DataGridTemplateColumn.CellTemplate>
+                                    </DataGridTemplateColumn>
+                                </DataGrid.Columns>
+                            </DataGrid>
+                        </Grid>
+                    </TabItem>
+
+                    <!-- TAB 3: Execution Log & Report Viewer -->
+                    <TabItem Header="📜 Журнал и отчёт" Style="{StaticResource ModernTabItem}">
+                        <Grid Margin="0,12,0,0">
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="*" />
+                            </Grid.RowDefinitions>
+
+                            <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
+                                <Button x:Name="BtnOpenHtmlReport" Click="BtnOpenHtmlReport_Click" Style="{StaticResource PrimaryButton}" Margin="0,0,10,0" Padding="12,6" FontSize="12">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="🌐" Margin="0,0,6,0" />
+                                        <TextBlock Text="Открыть красивый HTML-отчёт" />
+                                    </StackPanel>
+                                </Button>
+                                <Button x:Name="BtnSaveReportFile" Click="BtnSaveReportFile_Click" Style="{StaticResource ModernButton}" Margin="0,0,10,0" Padding="12,6" FontSize="12">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="💾" Margin="0,0,6,0" />
+                                        <TextBlock Text="Сохранить файл отчёта..." />
+                                    </StackPanel>
+                                </Button>
+                                <Button x:Name="BtnCopyTextReport" Click="BtnCopyTextReport_Click" Style="{StaticResource ModernButton}" Padding="12,6" FontSize="12">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="📋" Margin="0,0,6,0" />
+                                        <TextBlock Text="Скопировать отчёт" />
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+
+                            <Border Grid.Row="1" Background="#06090E" BorderBrush="{StaticResource BorderBrush}" BorderThickness="1" CornerRadius="8" Padding="12">
+                                <TextBox x:Name="TxtLogOutput" IsReadOnly="True" Background="Transparent" Foreground="#94A3B8" 
+                                         FontFamily="Consolas, Courier New" FontSize="12" BorderThickness="0" 
+                                         TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" AcceptsReturn="True" />
+                            </Border>
+                        </Grid>
+                    </TabItem>
+                </TabControl>
+            </Border>
+
+            <!-- ROW 4: Status Footer -->
+            <Grid Grid.Row="4" Margin="0,12,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <ProgressBar x:Name="PrgProgress" Grid.Row="0" IsIndeterminate="False" Visibility="Collapsed" Margin="0,0,0,6" />
+
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock x:Name="TxtStatus" Text="Готово к работе. Нажмите «Сканировать ПК и браузеры» для начала." 
+                               FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" VerticalAlignment="Center" />
+
+                    <StackPanel Grid.Column="1" Orientation="Horizontal">
+                        <TextBlock Text="Активные браузеры: " FontSize="12" Foreground="{StaticResource TextSecondaryBrush}" />
+                        <TextBlock x:Name="TxtActiveBrowsersList" Text="не определены" FontSize="12" FontWeight="SemiBold" Foreground="{StaticResource TextPrimaryBrush}" />
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </Grid>
+
+        <!-- MODAL OVERLAY: Certificate Details View -->
+        <Grid x:Name="ModalDetailsOverlay" Visibility="Collapsed" Background="#CC000000">
+            <Border Width="640" MaxHeight="600" CornerRadius="12" Background="{StaticResource BgCardBrush}" BorderBrush="{StaticResource BorderHighlightBrush}" BorderThickness="1" Padding="24" VerticalAlignment="Center">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                        <RowDefinition Height="*" />
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+
+                    <!-- Title -->
+                    <Grid Grid.Row="0" Margin="0,0,0,16">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel>
+                            <TextBlock Text="Детальные сведения о сертификате" FontSize="16" FontWeight="Bold" />
+                            <TextBlock x:Name="DlgCertCategory" Text="Корневой центр сертификации" FontSize="12" Foreground="{StaticResource AccentBlueBrush}" Margin="0,2,0,0" />
+                        </StackPanel>
+                        <Button Grid.Column="1" Content="✕" Click="BtnCloseModal_Click" Style="{StaticResource ModernButton}" Padding="8,4" FontSize="13" />
+                    </Grid>
+
+                    <!-- Details Fields -->
+                    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="0,0,0,16">
+                        <StackPanel>
+                            <TextBlock Text="Имя субъекта (Common Name):" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" />
+                            <TextBox x:Name="DlgCommonName" IsReadOnly="True" Margin="0,2,0,10" Background="{StaticResource BgSecondaryBrush}" />
+
+                            <TextBlock Text="Отпечаток SHA-1 (Thumbprint):" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" />
+                            <TextBox x:Name="DlgThumbprint" IsReadOnly="True" Margin="0,2,0,10" Background="{StaticResource BgSecondaryBrush}" FontFamily="Consolas" />
+
+                            <TextBlock Text="Серийный номер:" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" />
+                            <TextBox x:Name="DlgSerialNumber" IsReadOnly="True" Margin="0,2,0,10" Background="{StaticResource BgSecondaryBrush}" FontFamily="Consolas" />
+
+                            <TextBlock Text="Срок действия:" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" />
+                            <TextBox x:Name="DlgValidity" IsReadOnly="True" Margin="0,2,0,10" Background="{StaticResource BgSecondaryBrush}" />
+
+                            <TextBlock Text="Хранилище / Источник:" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" />
+                            <TextBox x:Name="DlgStorePath" IsReadOnly="True" Margin="0,2,0,10" Background="{StaticResource BgSecondaryBrush}" />
+
+                            <TextBlock Text="Полный субъект (Subject):" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" />
+                            <TextBox x:Name="DlgSubject" IsReadOnly="True" Margin="0,2,0,10" Background="{StaticResource BgSecondaryBrush}" TextWrapping="Wrap" Height="50" />
+
+                            <TextBlock Text="Издатель (Issuer):" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" />
+                            <TextBox x:Name="DlgIssuer" IsReadOnly="True" Margin="0,2,0,10" Background="{StaticResource BgSecondaryBrush}" TextWrapping="Wrap" Height="50" />
+
+                            <TextBlock Text="Причина обнаружения:" FontSize="11" Foreground="{StaticResource TextSecondaryBrush}" />
+                            <TextBox x:Name="DlgReason" IsReadOnly="True" Margin="0,2,0,10" Background="{StaticResource BgSecondaryBrush}" TextWrapping="Wrap" Foreground="#FCA5A5" />
+                        </StackPanel>
+                    </ScrollViewer>
+
+                    <!-- Modal Actions -->
+                    <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right">
+                        <Button Content="Закрыть" Click="BtnCloseModal_Click" Style="{StaticResource ModernButton}" Padding="16,6" />
+                    </StackPanel>
+                </Grid>
+            </Border>
+        </Grid>
+    </Grid>
+</Window>

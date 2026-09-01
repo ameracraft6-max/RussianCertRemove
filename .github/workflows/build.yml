@@ -1,0 +1,41 @@
+name: Build & Release
+
+on:
+  push:
+    branches: [ "master", "main" ]
+    tags: [ "v*" ]
+  pull_request:
+    branches: [ "master", "main" ]
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: windows-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v4
+
+    - name: Setup .NET 8
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+
+    - name: Build Application
+      run: dotnet build RussianCertRemover/RussianCertRemover.csproj -c Release
+
+    - name: Publish Application
+      run: dotnet publish RussianCertRemover/RussianCertRemover.csproj -c Release -o ./publish
+
+    - name: Setup Inno Setup
+      uses: Techcable/inno-setup-action@v1
+      with:
+        path: RussianCertRemover.iss
+
+    - name: Upload Build Artifacts
+      uses: actions/upload-artifact@v4
+      with:
+        name: RussianCertRemover-Build
+        path: |
+          RussianCertRemover_Setup.exe
+          ./publish/RussianCertRemover.exe

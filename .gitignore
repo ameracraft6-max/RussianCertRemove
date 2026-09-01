@@ -1,0 +1,37 @@
+# Build results
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio / VS Code
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Packages
+*.nupkg
+project.lock.json
+project.assets.json
+
+# Temporary files & Logs
+*.log
+*.tmp
+*.bak
+InstallerPayload/
+TestSelfContained/
+test_lzma.7z
+sfx_config.txt
+app.7z
+
+# Exclude generated setup binaries from git history (they belong to GitHub Releases)
+*.exe
+*.dll
+*.pdb
+*.deps.json
+*.runtimeconfig.json
+discord_banner_cat.gif
+!RussianCertRemover/app.ico
