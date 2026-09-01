@@ -52,7 +52,7 @@
 
 ## 📥 Скачивание и установка
 
-Скачайте последнюю версию со страницы **[Releases](https://github.com/ameracraft6-max/RussianCertRemover/releases)**:
+Скачайте последнюю версию со страницы **[Releases](https://github.com/ameracraft6-max/RussianCertRemove/releases)**:
 
 | Вариант | Файл | Описание |
 |---|---|---|
@@ -71,8 +71,8 @@
 ### Сборка приложения
 ```bash
 # Клонирование репозитория
-git clone https://github.com/ameracraft6-max/RussianCertRemover.git
-cd RussianCertRemover
+git clone https://github.com/ameracraft6-max/RussianCertRemove.git
+cd RussianCertRemove
 
 # Сборка проекта
 dotnet build RussianCertRemover/RussianCertRemover.csproj -c Release
