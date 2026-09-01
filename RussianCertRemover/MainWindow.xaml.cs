@@ -28,7 +28,9 @@ namespace RussianCertRemover
         private int _totalScannedCerts = 0;
         private bool _isScanning = false;
 
-        public MainWindow()
+        public MainWindow() : this(false) { }
+
+        public MainWindow(bool isDemo)
         {
             InitializeComponent();
 
@@ -38,10 +40,98 @@ namespace RussianCertRemover
             InitializeAdminStatus();
             Log("Russian CA Remover инициализирован.");
 
-            Loaded += async (s, e) =>
+            if (isDemo)
             {
-                await RunScanAsync();
-            };
+                LoadDemoData();
+            }
+            else
+            {
+                Loaded += async (s, e) =>
+                {
+                    await RunScanAsync();
+                };
+            }
+        }
+
+        public void LoadDemoData()
+        {
+            _allCertificates.Clear();
+            _allCertificates.Add(new CertificateItem
+            {
+                CommonName = "Russian Trusted Root CA",
+                Category = CertCategory.RootCA,
+                StoreLocationDisplay = "Windows: Локальный компьютер",
+                StoreName = "Root (Доверенные корневые центры)",
+                Thumbprint = "8FF915CCAB7BC16F8C5C8099D53E0E115B3AEC2F",
+                NotBefore = new DateTime(2022, 3, 1),
+                NotAfter = new DateTime(2032, 3, 1),
+                Status = ItemStatus.Detected,
+                IsSelected = true,
+                StatusMessage = "Совпадение по известному SHA-1 отпечатку НУЦ Минцифры",
+                Subject = "CN=Russian Trusted Root CA, O=Ministry of Digital Development, C=RU",
+                Issuer = "CN=Russian Trusted Root CA, O=Ministry of Digital Development, C=RU",
+                SerialNumber = "01F493B29A8812C450B1"
+            });
+
+            _allCertificates.Add(new CertificateItem
+            {
+                CommonName = "Russian Trusted Sub CA",
+                Category = CertCategory.SubCA,
+                StoreLocationDisplay = "Windows: Локальный компьютер",
+                StoreName = "CA (Промежуточные центры)",
+                Thumbprint = "7D3EFB185A48DEEE63510A2B93D0F70EB3C4E3D8",
+                NotBefore = new DateTime(2022, 3, 1),
+                NotAfter = new DateTime(2027, 3, 1),
+                Status = ItemStatus.Detected,
+                IsSelected = true,
+                StatusMessage = "Обнаружен маркер 'Russian Trusted Sub CA' в данных субъекта",
+                Subject = "CN=Russian Trusted Sub CA, OU=НУЦ Минцифры, O=Минцифры России, C=RU",
+                Issuer = "CN=Russian Trusted Root CA, O=Ministry of Digital Development, C=RU",
+                SerialNumber = "03E19C823DA94B2C118A"
+            });
+
+            _allCertificates.Add(new CertificateItem
+            {
+                CommonName = "Подчиненный центр Госуслуг (TLS Sub CA)",
+                Category = CertCategory.SubCA,
+                StoreLocationDisplay = "Firefox: default-release",
+                StoreName = "cert9.db (nssCertificates)",
+                Thumbprint = "EE4721C2B0DF7A3485E4BF59CF46F355C667469B",
+                NotBefore = new DateTime(2023, 1, 15),
+                NotAfter = new DateTime(2028, 1, 15),
+                Status = ItemStatus.Detected,
+                IsSelected = true,
+                StatusMessage = "Обнаружен маркер 'Госуслуги' в данных издателя",
+                Subject = "CN=Gosuslugi TLS Sub CA, O=АО «ГНИВЦ», C=RU",
+                Issuer = "CN=Russian Trusted Root CA, O=Ministry of Digital Development, C=RU",
+                SerialNumber = "0711BC900A45D1C34A92"
+            });
+
+            _stores.Clear();
+            _stores.Add(new StoreScanResult { StoreName = "Windows LocalMachine → Доверенные корневые (Root)", StoreType = "Windows LocalMachine", TotalScanned = 52, FoundCount = 1, StatusText = "Найдено: 1", StatusColor = "#EF4444" });
+            _stores.Add(new StoreScanResult { StoreName = "Windows LocalMachine → Промежуточные центры (CA)", StoreType = "Windows LocalMachine", TotalScanned = 84, FoundCount = 1, StatusText = "Найдено: 1", StatusColor = "#EF4444" });
+            _stores.Add(new StoreScanResult { StoreName = "Firefox (default-release) cert9.db", StoreType = "Mozilla cert9.db", TotalScanned = 18, FoundCount = 1, StatusText = "Найдено: 1", StatusColor = "#EF4444" });
+            _stores.Add(new StoreScanResult { StoreName = "Google Chrome (Запущен)", StoreType = "Chromium CAPI", TotalScanned = 136, FoundCount = 2, StatusText = "Активен (требуется перезапуск)", StatusColor = "#3B82F6" });
+            _stores.Add(new StoreScanResult { StoreName = "Яндекс Браузер (Запущен)", StoreType = "Chromium CAPI", TotalScanned = 136, FoundCount = 2, StatusText = "Активен (требуется перезапуск)", StatusColor = "#3B82F6" });
+            _stores.Add(new StoreScanResult { StoreName = "Windows CurrentUser → Доверенные корневые (Root)", StoreType = "Windows CurrentUser", TotalScanned = 42, FoundCount = 0, StatusText = "Чисто ✓", StatusColor = "#10B981" });
+
+            _totalScannedCerts = 1161;
+            _activeBrowsers = new List<string> { "Google Chrome", "Яндекс Браузер" };
+
+            ApplyFilter();
+            UpdateMetrics();
+
+            TxtActiveBrowsersList.Text = "Google Chrome, Яндекс Браузер";
+            TxtActiveBrowsersList.Foreground = new SolidColorBrush((Color)ColorConverter.ConvertFromString("#FBBF24"));
+
+            EmptyStatePanel.Visibility = Visibility.Collapsed;
+            GridCertificates.Visibility = Visibility.Visible;
+
+            TabCerts.Header = $"📋 Найденные сертификаты ({_allCertificates.Count})";
+            TabStores.Header = $"🌐 Хранилища и браузеры ({_stores.Count})";
+
+            Log("Сканирование завершено. Проверено объектов: 1161. Найдено сертификатов Минцифры: 3.");
+            TxtStatus.Text = "Сканирование завершено. Обнаружено 3 сертификата Минцифры.";
         }
 
         private void InitializeAdminStatus()

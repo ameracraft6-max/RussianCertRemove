@@ -12,6 +12,10 @@
   <img src="https://img.shields.io/badge/Status-Stable-success?style=flat-square" alt="Stable" />
 </p>
 
+<p align="center">
+  <img src="assets/screenshot.png" alt="Интерфейс программы Russian CA Remover" width="850" />
+</p>
+
 ---
 
 ## 🎯 Назначение
